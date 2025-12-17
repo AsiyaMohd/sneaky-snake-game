@@ -1,8 +1,13 @@
 version: '3.8'
+
 services:
-  sneaky-snake-game:
+  sneaky-snake:
     build: .
     ports:
-      - "80:80"
-    container_name: sneaky-snake-game
-    restart: unless-stopped
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+    command: python3 -m flask run --host=0.0.0.0
