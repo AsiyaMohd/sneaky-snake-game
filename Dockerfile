@@ -1,14 +1,21 @@
-# Use official Nginx image to serve static frontend
-FROM nginx:alpine
+# Use Python base image
+FROM python:3.11-slim
 
-# Remove default nginx website
-RUN rm -rf /usr/share/nginx/html/*
+# Set working directory
+WORKDIR /app
 
-# Copy static files from repo to nginx html folder
-COPY ./ /usr/share/nginx/html/
+# Copy requirements and install
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port 80
-EXPOSE 80
+# Copy application files (mainly static files and index.html)
+COPY . .
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Expose port if Flask app will be run (default flask port 5000)
+EXPOSE 5000
+
+# Set environment variables to avoid python buffering
+ENV PYTHONUNBUFFERED=1
+
+# Command to run the flask app
+CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
