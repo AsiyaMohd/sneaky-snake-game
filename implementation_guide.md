@@ -1,73 +1,69 @@
-# Sneaky Snake Game - Implementation and Deployment Guide
-
-## Overview
-
-Sneaky Snake is a modern web-based implementation of the classic Snake game built with vanilla HTML, CSS, and JavaScript. It is a purely front-end application which runs completely in the browser.
+# Sneaky Snake Game - Implementation Guide
 
 ## Prerequisites
+- Docker and Docker Compose installed on your local machine or server
+- GitHub account with access to repository
+- Docker Hub account for pushing Docker images (optional)
+- Python 3.11 (for local development without Docker)
 
-- Docker installed locally for building and running the container image.
-- Docker Hub account (or other container registry) for pushing images (for CI/CD).
-- GitHub account with repository secrets configured for CI/CD.
-
-## Required GitHub Secrets
-
-For the provided GitHub Actions workflow to build and push the Docker image, you need to set these repository secrets:
-
-- `DOCKER_USERNAME`: Your Docker Hub username.
-- `DOCKER_PASSWORD`: Your Docker Hub password or access token.
-
-## Local Development
-
-You can simply open the `index.html` file directly in your browser to play the game:
-
-```bash
-# Clone the repository
- git clone https://github.com/AsiyaMohd/sneaky-snake-game.git
- cd sneaky-snake-game
-
-# Open index.html directly in browser
- open index.html  # or just double-click index.html in your file explorer
-```
-
-## Building and Running with Docker
-
-To build and run the application using Docker:
-
-```bash
-# Build Docker image locally
- docker build -t sneaky-snake-game .
-
-# Run container
- docker run -p 80:80 sneaky-snake-game
-
-# Visit http://localhost in your browser to play the game
-```
-
-Or using docker-compose:
-
-```bash
-docker-compose up
-```
-
-## Deployment Process
-
-This repository includes a GitHub Actions workflow that automatically builds and pushes the Docker image to Docker Hub upon pushes to the `main` branch. You must configure your Docker Hub credentials in the repository secrets for this to work.
+## Repository Setup
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/AsiyaMohd/sneaky-snake-game.git
+   cd sneaky-snake-game
+   ```
 
 ## Environment Variables
+- None required currently, but CI uses `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` secrets for pushing Docker images.
 
-No environment variables are required as this is a static frontend project.
+## Local Development
+### Running without Docker
+- Install Python 3.11 and pip
+- Install dependencies:
+  ```bash
+  pip install -r requirements.txt
+  ```
+- Run the Flask app:
+  ```bash
+  python3 -m flask run
+  ```
+- Open browser on `http://localhost:5000`
 
-## Database and External Services
+### Running with Docker
+- Build and run the Docker container:
+  ```bash
+  docker build -t sneaky-snake-game .
+  docker run -p 5000:5000 sneaky-snake-game
+  ```
+- Alternatively, use Docker Compose:
+  ```bash
+  docker-compose up --build
+  ```
+- Open browser on `http://localhost:5000`
 
-No database or external service is used. All high scores are saved locally in the browser's localStorage.
+## CI/CD Pipeline
+- On push or pull request to `main` branch, GitHub Actions pipeline runs:
+  - Installs dependencies
+  - Runs tests (currently no tests)
+  - Builds Docker image
+  - Logs into Docker Hub (credentials must be set up in repo secrets)
+  - Pushes Docker image to Docker Hub repository `${{ secrets.DOCKERHUB_USERNAME }}/sneaky-snake-game`
+
+## Notes
+- The current backend is a Flask app serving the front-end game assets.
+- No database or external services are required.
+- The game runs fully client-side in the browser.
 
 ## Troubleshooting
+- Ensure Python version and dependencies are correctly installed.
+- Ensure Docker is running with proper permissions.
+- Check GitHub Actions logs for CI pipeline errors.
 
-- Ensure Docker is installed and running.
-- Verify Docker Hub credentials in GitHub secrets.
-- If the app does not load, check browser console for JavaScript errors.
+## Contributing
+- Please follow the guidelines in CONTRIBUTING.md when submitting pull requests.
 
-## Additional Notes
+## Additional Resources
+- Project README.md contains game overview and controls.
+- Source code in `statics/js/` has JavaScript game logic.
 
-- If you want to customize the image name or push to another registry, modify the GitHub Actions workflow accordingly.
+Thank you for using Sneaky Snake Game!
